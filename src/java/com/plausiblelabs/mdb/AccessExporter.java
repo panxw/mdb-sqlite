@@ -133,6 +133,7 @@ public class AccessExporter {
         final int columnCount = columns.size();
         for (int i = 0; i < columnCount; i++) {
             final Column column = columns.get(i);
+            int columnLen = column.getLength();
             
             stmtBuilder.append(escapeIdentifier(column.getName()));
             stmtBuilder.append(" ");
@@ -149,11 +150,17 @@ public class AccessExporter {
                 case INT:
                 case LONG:
                     stmtBuilder.append("INTEGER");
+                    if(columnLen>0) {
+                    	stmtBuilder.append("("+columnLen+")");
+                    }
                     break;
               
                 /* Timestamp */
                 case SHORT_DATE_TIME:
                     stmtBuilder.append("DATETIME");
+                    if(columnLen>0) {
+                    	stmtBuilder.append("("+columnLen+")");
+                    }
                     break;
                
                 /* Floating point */
@@ -161,18 +168,31 @@ public class AccessExporter {
                 case FLOAT:
                 case NUMERIC:
                     stmtBuilder.append("DOUBLE");
+                    if(columnLen>0) {
+                    	stmtBuilder.append("("+columnLen+")");
+                    }
                     break;
                 
                 /* Strings */
                 case TEXT:
                 case GUID:
                 case MEMO:
-                    stmtBuilder.append("TEXT");
+                    //stmtBuilder.append("TEXT");
+                    if(columnLen<256) {
+                    	stmtBuilder.append("VCHAR("+columnLen+")");
+                    } else {
+                    	stmtBuilder.append("TEXT("+columnLen+")");
+                    }
                     break;
 
                 /* Money -- This can't be floating point, so let's be safe with strings */
                 case MONEY:
-                    stmtBuilder.append("TEXT");
+                    //stmtBuilder.append("TEXT");
+                    if(columnLen<256) {
+                    	stmtBuilder.append("VCHAR("+columnLen+")");
+                    } else {
+                    	stmtBuilder.append("TEXT"+columnLen+")");
+                    }
                     break;
 
                 default:
