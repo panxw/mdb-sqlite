@@ -150,17 +150,12 @@ public class AccessExporter {
                 case INT:
                 case LONG:
                     stmtBuilder.append("INTEGER");
-                    if(columnLen>0) {
-                    	stmtBuilder.append("("+columnLen+")");
-                    }
                     break;
               
                 /* Timestamp */
                 case SHORT_DATE_TIME:
                     stmtBuilder.append("DATETIME");
-                    if(columnLen>0) {
-                    	stmtBuilder.append("("+columnLen+")");
-                    }
+					stmtBuilder.append("DEFAULT (time())");
                     break;
                
                 /* Floating point */
@@ -168,9 +163,6 @@ public class AccessExporter {
                 case FLOAT:
                 case NUMERIC:
                     stmtBuilder.append("DOUBLE");
-                    if(columnLen>0) {
-                    	stmtBuilder.append("("+columnLen+")");
-                    }
                     break;
                 
                 /* Strings */
@@ -179,7 +171,11 @@ public class AccessExporter {
                 case MEMO:
                     //stmtBuilder.append("TEXT");
                     if(columnLen<256) {
-                    	stmtBuilder.append("VCHAR("+columnLen+")");
+						if(columnLen>0){
+							stmtBuilder.append("VCHAR("+columnLen+")");
+						}else {
+							stmtBuilder.append("TEXT");
+						}
                     } else {
                     	stmtBuilder.append("TEXT("+columnLen+")");
                     }
@@ -187,12 +183,7 @@ public class AccessExporter {
 
                 /* Money -- This can't be floating point, so let's be safe with strings */
                 case MONEY:
-                    //stmtBuilder.append("TEXT");
-                    if(columnLen<256) {
-                    	stmtBuilder.append("VCHAR("+columnLen+")");
-                    } else {
-                    	stmtBuilder.append("TEXT"+columnLen+")");
-                    }
+                    stmtBuilder.append("TEXT");
                     break;
 
                 default:
