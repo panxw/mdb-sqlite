@@ -155,7 +155,7 @@ public class AccessExporter {
                 /* Timestamp */
                 case SHORT_DATE_TIME:
                     stmtBuilder.append("DATETIME");
-					stmtBuilder.append("DEFAULT (time())");
+					stmtBuilder.append(" DEFAULT (time())");
                     break;
                
                 /* Floating point */
