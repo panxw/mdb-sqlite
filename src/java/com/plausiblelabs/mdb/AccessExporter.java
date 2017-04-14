@@ -34,6 +34,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -154,8 +158,9 @@ public class AccessExporter {
               
                 /* Timestamp */
                 case SHORT_DATE_TIME:
-                    stmtBuilder.append("DATETIME");
-					stmtBuilder.append(" DEFAULT (time())");
+                    //stmtBuilder.append("DATETIME");
+                    stmtBuilder.append("VCHAR(13)");
+					//stmtBuilder.append(" DEFAULT (time())");
                     break;
                
                 /* Floating point */
@@ -231,7 +236,6 @@ public class AccessExporter {
         
         for (int i = 0; i < columnCount; i++) {
             final Column column = columns.get(i);
-
             /* The column name and the VALUE binding */
             stmtBuilder.append(escapeIdentifier(column.getName()));
             valueStmtBuilder.append("?");
@@ -264,6 +268,7 @@ public class AccessExporter {
                 }
 
                 /* Perform any conversions */
+			
                 switch (column.getType()) {
                     case BINARY:
                     case OLE:
@@ -294,7 +299,13 @@ public class AccessExporter {
                         /* Store it */
                         prep.setInt(i + 1, intVal);
                         break;
+					case SHORT_DATE_TIME:
+						String dateStr = row.get(column.getName()).toString();
+						Date d = new Date(dateStr);
+						prep.setObject(i+1, new Time(d.getTime()));
+					break;
                     default:
+						
                         prep.setObject(i + 1, row.get(column.getName()));
                         break;
                 }
